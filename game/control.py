@@ -4,7 +4,7 @@ import queue
 
 
 class PuzzleController:
-    def __init__(self, grid_size=6, piece_size=100, offset_x=50, offset_y=50):
+    def __init__(self, grid_size=3, piece_size=100, offset_x=50, offset_y=50):
         self.grid_size = grid_size
         self.piece_size = piece_size
         self.offset_x = offset_x

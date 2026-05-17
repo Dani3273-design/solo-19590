@@ -5,7 +5,7 @@ import pygame
 
 
 class PuzzleGenerator:
-    def __init__(self, grid_size=6, piece_size=100):
+    def __init__(self, grid_size=3, piece_size=100):
         self.grid_size = grid_size
         self.piece_size = piece_size
         self.total_pieces = grid_size * grid_size

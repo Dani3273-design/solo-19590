@@ -99,7 +99,7 @@ class UIManager:
             surface.blit(text, text_rect)
             y_offset += 35
 
-    def draw_game_screen(self, surface, pieces, controller, puzzle_gen, counter, grid_offset_x, grid_offset_y):
+    def draw_game_screen(self, surface, pieces, controller, puzzle_gen, counter, grid_offset_x, grid_offset_y, target_image=None):
         surface.fill(self.colors['bg'])
 
         grid_width = controller.grid_size * controller.piece_size
@@ -172,13 +172,24 @@ class UIManager:
         moves_value_rect = moves_value.get_rect(center=(info_panel_x + info_panel_width // 2, info_panel_y + 150))
         surface.blit(moves_value, moves_value_rect)
 
+        if target_image is not None:
+            preview_size = 120
+            preview_x = info_panel_x + (info_panel_width - preview_size) // 2
+            preview_y = info_panel_y + info_panel_height + 160
+            preview_label = self.fonts['small'].render('目标图', True, self.colors['title'])
+            preview_label_rect = preview_label.get_rect(center=(preview_x + preview_size // 2, preview_y - 20))
+            surface.blit(preview_label, preview_label_rect)
+            pygame.draw.rect(surface, (200, 200, 200), (preview_x - 2, preview_y - 2, preview_size + 4, preview_size + 4), 2)
+            target_surface = puzzle_gen.pil_to_pygame(target_image.resize((preview_size, preview_size)))
+            surface.blit(target_surface, (preview_x, preview_y))
+
     def draw_result_screen(self, surface, counter):
         overlay = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 180))
         surface.blit(overlay, (0, 0))
 
         panel_width = 400
-        panel_height = 350
+        panel_height = 430
         panel_x = (self.screen_width - panel_width) // 2
         panel_y = (self.screen_height - panel_height) // 2
 
@@ -194,13 +205,13 @@ class UIManager:
         surface.blit(time_label, time_label_rect)
 
         time_value = self.fonts['title'].render(counter.get_formatted_time(), True, (220, 20, 60))
-        time_value_rect = time_value.get_rect(center=(self.screen_width // 2, panel_y + 175))
+        time_value_rect = time_value.get_rect(center=(self.screen_width // 2, panel_y + 180))
         surface.blit(time_value, time_value_rect)
 
         moves_label = self.fonts['subtitle'].render('总步数', True, self.colors['text'])
-        moves_label_rect = moves_label.get_rect(center=(self.screen_width // 2, panel_y + 230))
+        moves_label_rect = moves_label.get_rect(center=(self.screen_width // 2, panel_y + 250))
         surface.blit(moves_label, moves_label_rect)
 
         moves_value = self.fonts['title'].render(str(counter.get_moves()), True, (220, 20, 60))
-        moves_value_rect = moves_value.get_rect(center=(self.screen_width // 2, panel_y + 275))
+        moves_value_rect = moves_value.get_rect(center=(self.screen_width // 2, panel_y + 300))
         surface.blit(moves_value, moves_value_rect)

@@ -22,13 +22,13 @@ class PuzzleGame:
         pygame.init()
         pygame.display.set_caption('滑动拼图游戏')
 
-        self.grid_size = 6
-        self.piece_size = 90
+        self.grid_size = 3
+        self.piece_size = 150
         self.grid_offset_x = 50
         self.grid_offset_y = 50
 
         self.screen_width = self.grid_offset_x * 2 + self.grid_size * self.piece_size + 250
-        self.screen_height = self.grid_offset_y * 2 + self.grid_size * self.piece_size + 50
+        self.screen_height = self.grid_offset_y * 2 + self.grid_size * self.piece_size + 200
 
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.clock = pygame.time.Clock()
@@ -54,6 +54,7 @@ class PuzzleGame:
         self.start_button = None
         self.back_button = None
         self.restart_button = None
+        self.reset_button = None
         self._init_all_buttons()
 
     def _init_all_buttons(self):
@@ -83,14 +84,24 @@ class PuzzleGame:
             color=(128, 128, 128), hover_color=(169, 169, 169)
         )
 
+        reset_button_width = 120
+        reset_button_height = 45
+        reset_button_x = info_panel_x + (info_panel_width - reset_button_width) // 2
+        reset_button_y = back_button_y + back_button_height + 15
+        self.reset_button = Button(
+            reset_button_x, reset_button_y, reset_button_width, reset_button_height,
+            '重新开始', self.ui_manager.fonts['small'],
+            color=(255, 140, 0), hover_color=(255, 165, 0)
+        )
+
         panel_width = 400
-        panel_height = 350
+        panel_height = 430
         panel_x = (self.screen_width - panel_width) // 2
         panel_y = (self.screen_height - panel_height) // 2
         restart_button_width = 180
         restart_button_height = 55
         restart_button_x = (self.screen_width - restart_button_width) // 2
-        restart_button_y = panel_y + panel_height - 80
+        restart_button_y = panel_y + panel_height - 90
         self.restart_button = Button(
             restart_button_x, restart_button_y, restart_button_width, restart_button_height,
             '再来一局', self.ui_manager.fonts['button'],
@@ -140,6 +151,10 @@ class PuzzleGame:
         if self.back_button and self.back_button.handle_event(event):
             self.counter.stop()
             self.state = GameState.START
+            return True
+
+        if self.reset_button and self.reset_button.handle_event(event):
+            self.init_game()
             return True
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -196,14 +211,17 @@ class PuzzleGame:
             self.ui_manager.draw_game_screen(
                 self.screen, self.pieces, self.controller,
                 self.puzzle_gen, self.counter,
-                self.grid_offset_x, self.grid_offset_y
+                self.grid_offset_x, self.grid_offset_y,
+                self.puzzle_gen.image
             )
             self.back_button.draw(self.screen)
+            self.reset_button.draw(self.screen)
         elif self.state == GameState.RESULT:
             self.ui_manager.draw_game_screen(
                 self.screen, self.pieces, self.controller,
                 self.puzzle_gen, self.counter,
-                self.grid_offset_x, self.grid_offset_y
+                self.grid_offset_x, self.grid_offset_y,
+                self.puzzle_gen.image
             )
             self.ui_manager.draw_result_screen(self.screen, self.counter)
             self.restart_button.draw(self.screen)
